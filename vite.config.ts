@@ -1,11 +1,19 @@
 import dts from "vite-plugin-dts";
 import path from "path";
 import react from "@vitejs/plugin-react";
+import wesl from "wesl-plugin/vite";
+import { linkBuildPlugin } from "wesl-plugin";
 import { defineConfig, UserConfig } from "vite";
 
 export default defineConfig({
   base: "./",
-  plugins: [dts({ rollupTypes: true }), react()],
+  plugins: [
+    wesl({
+      extensions: [linkBuildPlugin],
+    }),
+    dts({ rollupTypes: true }),
+    react(),
+  ],
   build: {
     sourcemap: true,
     lib: {
@@ -22,6 +30,11 @@ export default defineConfig({
           "react-dom": "ReactDOM",
         },
       },
+    },
+  },
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "src"),
     },
   },
 } satisfies UserConfig);
