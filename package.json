@@ -24,6 +24,7 @@
   "scripts": {
     "dev": "tsc && vite build --watch",
     "start": "vite",
+    "test": "vitest",
     "build": "tsc && vite build",
     "build:types": "dts-bundle-generator --config ./dts-bundle-generator.config.ts",
     "lint": "eslint ./src --ext .ts",
@@ -37,12 +38,14 @@
     "@typescript-eslint/eslint-plugin": "^8.26.1",
     "@typescript-eslint/parser": "^8.26.1",
     "@vitejs/plugin-react": "^4.3.4",
+    "@vitest/browser": "^3.0.9",
     "@webgpu/types": "^0.1.56",
     "dts-bundle-generator": "^9.5.1",
     "eslint": "^9.22.0",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.3",
     "globals": "^16.0.0",
+    "playwright": "^1.51.0",
     "prettier": "^3.5.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -51,9 +54,10 @@
     "typescript-eslint": "^8.26.1",
     "vite": "^6.2.2",
     "vite-plugin-dts": "^4.5.3",
-    "wesl-plugin": "^0.6.0-pre10"
+    "vitest": "^3.0.9",
+    "wesl-plugin": "^0.6.0-rc1"
   },
   "dependencies": {
-    "wesl": "^0.6.0-pre10"
+    "wesl": "^0.6.0-rc1"
   }
 }

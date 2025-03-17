@@ -2,14 +2,14 @@ import dts from "vite-plugin-dts";
 import path from "path";
 import react from "@vitejs/plugin-react";
 import wesl from "wesl-plugin/vite";
-import { linkBuildPlugin } from "wesl-plugin";
+import { staticBuildExtension } from "wesl-plugin";
 import { defineConfig, UserConfig } from "vite";
 
 export default defineConfig({
   base: "./",
   plugins: [
     wesl({
-      extensions: [linkBuildPlugin],
+      extensions: [staticBuildExtension],
     }),
     dts({ rollupTypes: true }),
     react(),

@@ -1,3 +1,8 @@
-import { a } from "./example/a";
+import { link } from "wesl";
 
-export { a };
+link({
+  weslSrc: {},
+  constants: {
+    num_lights: 10,
+  },
+});
