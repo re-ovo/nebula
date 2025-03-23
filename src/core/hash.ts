@@ -14,4 +14,18 @@ function hashString(str: string, prev: number = FNV_OFFSET_BASIS): number {
   return prev;
 }
 
-export { hash, hashString };
+function hashNumber(
+  num: number | number[],
+  prev: number = FNV_OFFSET_BASIS,
+): number {
+  if (Array.isArray(num)) {
+    return num.reduce((acc, n) => hash(n, acc), prev);
+  }
+  return hash(num, prev);
+}
+
+function hashBoolean(bool: boolean, prev: number = FNV_OFFSET_BASIS): number {
+  return hash(bool ? 1 : 0, prev);
+}
+
+export { hash, hashString, hashNumber, hashBoolean };
