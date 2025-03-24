@@ -1,1 +1,8 @@
 @import "tailwindcss";
+
+body {
+  @apply font-sans;
+  min-height: 100vh;
+  padding: 0;
+  margin: 0;
+}
