@@ -63,7 +63,6 @@
     "typescript-eslint": "^8.27.0",
     "vite": "^6.2.2",
     "vite-plugin-dts": "^4.5.3",
-    "vitest": "^3.0.9",
-    "wesl-plugin": "^0.6.0-rc3"
+    "vitest": "^3.0.9"
   }
 }

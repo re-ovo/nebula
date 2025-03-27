@@ -1,20 +1,14 @@
-import type { Conditions } from "wesl";
 import { WgslReflect } from "wgsl_reflect";
+import { ShaderOptions } from "./shader-options";
 
 class ShaderVariant {
   private readonly code: string;
-  private readonly constants: Record<string, string | number>;
-  private readonly conditions: Conditions;
+  private readonly options: ShaderOptions;
   private readonly reflect: WgslReflect;
 
-  constructor(
-    code: string,
-    constants: Record<string, string | number>,
-    conditions: Conditions,
-  ) {
+  constructor(code: string, options: ShaderOptions) {
     this.code = code;
-    this.constants = constants;
-    this.conditions = conditions;
+    this.options = options;
     this.reflect = new WgslReflect(this.code);
   }
 
@@ -22,12 +16,8 @@ class ShaderVariant {
     return this.code;
   }
 
-  getConstants() {
-    return this.constants;
-  }
-
-  getConditions() {
-    return this.conditions;
+  getOptions() {
+    return this.options;
   }
 
   getReflectionInfo() {

@@ -1,21 +1,12 @@
-import dts from "vite-plugin-dts";
-import path from "path";
-import react from "@vitejs/plugin-react";
-import wesl from "wesl-plugin/vite";
 import tailwindcss from "@tailwindcss/vite";
-import { staticBuildExtension } from "wesl-plugin";
+import react from "@vitejs/plugin-react";
+import path from "path";
 import { defineConfig, UserConfig } from "vite";
+import dts from "vite-plugin-dts";
 
 export default defineConfig({
   base: "./",
-  plugins: [
-    wesl({
-      extensions: [staticBuildExtension],
-    }),
-    dts({ rollupTypes: true }),
-    tailwindcss(),
-    react(),
-  ],
+  plugins: [dts({ rollupTypes: true }), tailwindcss(), react()],
   build: {
     sourcemap: true,
     lib: {
