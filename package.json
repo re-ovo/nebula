@@ -25,6 +25,7 @@
     "dev": "tsc && vite build --watch",
     "start": "vite",
     "test": "vitest",
+    "bench": "vitest bench",
     "build": "tsc && vite build",
     "build:types": "dts-bundle-generator --config ./dts-bundle-generator.config.ts",
     "lint": "eslint ./src --ext .ts",

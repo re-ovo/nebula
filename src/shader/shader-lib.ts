@@ -1,30 +1,36 @@
-import { link } from "wesl";
+import { Conditions, link } from "wesl";
+import ShaderVariant from "./shader-variant";
 
 class ShaderLib {
-  private readonly shaderSources: Record<string, string>;
+  private readonly shaderSources: Map<string, string>;
 
   constructor() {
-    this.shaderSources = {
-      // TODO: Add shaders
-    };
+    this.shaderSources = new Map();
   }
 
-  getShaderSource(name: string) {
-    return this.shaderSources[name];
+  getShaderSource(name: string): string | undefined {
+    return this.shaderSources.get(name);
   }
 
-  registerShaderSource(path: string, source: string) {
-    if (this.shaderSources[path]) {
-      console.warn(`Shader source already registered: ${path}`);
+  registerShaderSource(name: string, source: string) {
+    if (this.shaderSources.has(name)) {
+      console.warn(`Shader source already registered: ${name}`);
     }
-    this.shaderSources[path] = source;
+    this.shaderSources.set(name, source);
   }
 
-  getShaderVariant(name: string): ShaderVariant {
-    const source = this.getShaderSource(name);
-    if (!source) {
-      throw new Error(`Shader source not found: ${name}`);
-    }
+  async getShaderVariant(
+    name: string,
+    constants: Record<string, string | number>,
+    conditions: Conditions,
+  ): Promise<ShaderVariant> {
+    const result = await link({
+      weslSrc: Object.fromEntries(this.shaderSources),
+      rootModuleName: name,
+      constants,
+      conditions,
+    });
+    return new ShaderVariant(result.dest, constants, conditions);
   }
 }
 
