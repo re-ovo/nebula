@@ -1,6 +1,19 @@
 import { WgslReflect } from "wgsl_reflect";
 import { ShaderOptions } from "./shader-options";
 
+/**
+ * A variant of a shader source.
+ *
+ * @example
+ * ```ts
+ * const PBR_SHADER : ShaderSource = ...;
+ * const variant = await shaderLib.getShaderVariant(PBR_SHADER, {
+ *   constants: {
+ *     PI: Math.PI,
+ *   },
+ * });
+ * ```
+ */
 class ShaderVariant {
   private readonly code: string;
   private readonly options: ShaderOptions;
