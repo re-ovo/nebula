@@ -5,8 +5,8 @@ import {
   ShaderOptionsEqual,
   ShaderOptionsHash,
 } from "./shader-options";
-import ShaderSource from "./shader-source";
-import ShaderVariant from "./shader-variant";
+import { ShaderSource } from "./shader-source";
+import { ShaderVariant } from "./shader-variant";
 
 /**
  * A library of shader sources and variants.
@@ -91,4 +91,4 @@ class ShaderLib {
   }
 }
 
-export default ShaderLib;
+export { ShaderLib };

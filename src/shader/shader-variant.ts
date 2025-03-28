@@ -38,4 +38,4 @@ class ShaderVariant {
   }
 }
 
-export default ShaderVariant;
+export { ShaderVariant };

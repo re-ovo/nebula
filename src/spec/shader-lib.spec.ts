@@ -1,7 +1,7 @@
-import ShaderLib from "@/shader/shader-lib";
+import { ShaderLib } from "@/shader/shader-lib";
 import { ShaderOptions } from "@/shader/shader-options";
-import ShaderSource from "@/shader/shader-source";
-import ShaderVariant from "@/shader/shader-variant";
+import { ShaderSource } from "@/shader/shader-source";
+import { ShaderVariant } from "@/shader/shader-variant";
 import { beforeEach, describe, expect, it } from "vitest";
 
 describe("ShaderLib", () => {

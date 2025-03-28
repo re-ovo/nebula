@@ -29,4 +29,4 @@ class ShaderSource {
   }
 }
 
-export default ShaderSource;
+export { ShaderSource };

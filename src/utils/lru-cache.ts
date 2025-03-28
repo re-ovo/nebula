@@ -51,4 +51,4 @@ class LRUCache<K, V> {
   }
 }
 
-export default LRUCache;
+export { LRUCache };
