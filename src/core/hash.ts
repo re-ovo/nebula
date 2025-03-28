@@ -1,31 +1,25 @@
 const FNV_PRIME = 0x01000193;
 const FNV_OFFSET_BASIS = 0x811c9dc5;
 
-function hash(value: number, prev: number = FNV_OFFSET_BASIS): number {
-  prev ^= value;
-  prev *= FNV_PRIME;
-  return prev;
+function hash(value: number, state: number = FNV_OFFSET_BASIS): number {
+  state ^= value;
+  state *= FNV_PRIME;
+  return state;
 }
 
-function hashString(str: string, prev: number = FNV_OFFSET_BASIS): number {
+function hashString(str: string, state: number = FNV_OFFSET_BASIS): number {
   for (let i = 0; i < str.length; i++) {
-    prev = hash(str.charCodeAt(i), prev);
+    state = hash(str.charCodeAt(i), state);
   }
-  return prev;
+  return state;
 }
 
-function hashNumber(
-  num: number | number[],
-  prev: number = FNV_OFFSET_BASIS,
-): number {
-  if (Array.isArray(num)) {
-    return num.reduce((acc, n) => hash(n, acc), prev);
-  }
-  return hash(num, prev);
+function hashNumber(num: number, state: number = FNV_OFFSET_BASIS): number {
+  return hash(num, state);
 }
 
-function hashBoolean(bool: boolean, prev: number = FNV_OFFSET_BASIS): number {
-  return hash(bool ? 1 : 0, prev);
+function hashBoolean(bool: boolean, state: number = FNV_OFFSET_BASIS): number {
+  return hash(bool ? 1 : 0, state);
 }
 
 export { hash, hashString, hashNumber, hashBoolean };
