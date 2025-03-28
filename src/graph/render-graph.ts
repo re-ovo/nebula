@@ -119,10 +119,8 @@ export class RenderGraph {
   private device: GPUDevice | null = null;
   private compiled: CompiledGraph | null = null;
 
-  constructor(device?: GPUDevice) {
-    if (device) {
-      this.device = device;
-    }
+  constructor(device: GPUDevice) {
+    this.device = device;
   }
 
   /**
