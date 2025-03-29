@@ -8,13 +8,15 @@ export default mergeConfig(viteConfig, {
       enabled: true,
       provider: "playwright",
       // https://vitest.dev/guide/browser/playwright
-      instances: [{ browser: "chromium" }],
-      headless: true, // 无头模式，不打开浏览器UI
-      providerOptions: {
-        launch: {
-          args: ["--enable-gpu", "--enable-unsafe-webgpu"],
+      instances: [
+        {
+          browser: "chromium",
+          launch: {
+            args: ["--enable-gpu", "--enable-unsafe-webgpu"],
+          },
         },
-      },
+      ],
+      headless: true, // 无头模式，不打开浏览器UI
     },
   },
 });
