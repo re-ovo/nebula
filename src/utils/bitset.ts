@@ -98,4 +98,19 @@ export class Bitset {
     n = n + (n >> 16);
     return n & 0x3f;
   }
+
+  /**
+   * Convert the bitset to a hexadecimal string representation
+   * @returns Hexadecimal string representation of the bitset
+   */
+  toString(): string {
+    let result = "";
+    for (let i = 0; i < this.bits.length; i++) {
+      // Convert each 32-bit integer to a hexadecimal string
+      // padStart ensures each value is represented by 8 hex digits (4 bits per hex digit)
+      const hexValue = this.bits[i].toString(16).padStart(8, "0");
+      result = hexValue + result; // Prepend to maintain bit order
+    }
+    return result;
+  }
 }
