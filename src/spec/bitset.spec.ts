@@ -108,4 +108,21 @@ describe("Bitset", () => {
       expect(bitset.popCount()).toBe(0);
     });
   });
+
+  describe("equals", () => {
+    it("应该正确比较两个Bitset", () => {
+      const bitset1 = new Bitset(100);
+      const bitset2 = new Bitset(100);
+
+      bitset1.set(0);
+      bitset2.set(0);
+      expect(bitset1.equals(bitset2)).toBe(true);
+
+      bitset1.set(1);
+      expect(bitset1.equals(bitset2)).toBe(false);
+
+      bitset2.set(1);
+      expect(bitset1.equals(bitset2)).toBe(true);
+    });
+  });
 });

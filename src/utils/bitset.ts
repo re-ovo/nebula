@@ -100,6 +100,23 @@ export class Bitset {
   }
 
   /**
+   * 比较两个Bitset是否相等
+   * @param other 要比较的Bitset
+   * @returns 如果相等则返回true，否则返回false
+   */
+  equals(other: Bitset): boolean {
+    if (this.bits.length !== other.bits.length) {
+      return false;
+    }
+    for (let i = 0; i < this.bits.length; i++) {
+      if (this.bits[i] !== other.bits[i]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
    * Convert the bitset to a hexadecimal string representation
    * @returns Hexadecimal string representation of the bitset
    */
