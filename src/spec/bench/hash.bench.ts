@@ -1,5 +1,11 @@
 import { describe, bench } from "vitest";
-import { hash, hashString, hashNumber, hashBoolean } from "../../core/hash";
+import {
+  hash,
+  hashString,
+  hashNumber,
+  hashBoolean,
+  hashNumbers,
+} from "../../core/hash";
 
 describe("Hash Functions Benchmarks", () => {
   // 基础哈希函数测试
@@ -47,15 +53,15 @@ describe("Hash Functions Benchmarks", () => {
     });
 
     bench("小数组", () => {
-      hashNumber([1, 2, 3, 4, 5]);
+      hashNumbers([1, 2, 3, 4, 5]);
     });
 
     bench("中等大小数组", () => {
-      hashNumber(Array.from({ length: 100 }, (_, i) => i));
+      hashNumbers(Array.from({ length: 100 }, (_, i) => i));
     });
 
     bench("大数组", () => {
-      hashNumber(Array.from({ length: 1000 }, (_, i) => i));
+      hashNumbers(Array.from({ length: 1000 }, (_, i) => i));
     });
   });
 
