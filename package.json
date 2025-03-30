@@ -27,7 +27,6 @@
     "test": "vitest --run",
     "bench": "vitest bench",
     "build": "tsc && vite build",
-    "build:types": "dts-bundle-generator --config ./dts-bundle-generator.config.ts",
     "lint": "eslint ./src --ext .ts",
     "format": "prettier ./src --write"
   },
@@ -47,7 +46,6 @@
     "@vitejs/plugin-react": "^4.3.4",
     "@vitest/browser": "^3.0.9",
     "@webgpu/types": "^0.1.58",
-    "dts-bundle-generator": "^9.5.1",
     "eslint": "^9.23.0",
     "eslint-config-prettier": "^10.1.1",
     "eslint-plugin-prettier": "^5.2.4",
