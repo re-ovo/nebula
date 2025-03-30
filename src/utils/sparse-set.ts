@@ -149,4 +149,13 @@ export class SparseSet {
     this.sparse = newSparse;
     this.dense = newDense;
   }
+
+  /**
+   * 实现迭代器接口，允许使用for...of循环
+   */
+  *[Symbol.iterator](): IterableIterator<number> {
+    for (let i = 0; i < this.count; i++) {
+      yield this.dense[i];
+    }
+  }
 }

@@ -1,12 +1,5 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
-import {
-  World,
-  Entity,
-  EntityManager,
-  ComponentManager,
-  SystemManager,
-  System,
-} from "../ecs";
+import { beforeEach, describe, expect, it } from "vitest";
+import { ComponentManager, EntityManager, World } from "../ecs";
 
 // 测试用的组件类
 class PositionComponent {

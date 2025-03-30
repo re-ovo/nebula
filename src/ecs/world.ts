@@ -6,8 +6,8 @@ import {
   Signature,
 } from "./component";
 import { Entity, EntityManager } from "./entity";
-import { System, SystemManager } from "./system";
-import { Bitset } from "@/utils/bitset";
+import { QueryBuilder } from "./query";
+import { System } from "./system";
 
 const EMPTY_COMPONENT_MAP = new Map<ComponentTypeId, unknown>();
 
@@ -22,7 +22,7 @@ export class World {
   /** 组件管理器 */
   private componentManager: ComponentManager;
   /** 系统管理器 */
-  private systemManager: SystemManager;
+  private systems: System[] = [];
 
   /** 所有Archetype */
   private archetypes: Archetype[] = [];
@@ -35,7 +35,6 @@ export class World {
   constructor() {
     this.entityManager = new EntityManager();
     this.componentManager = new ComponentManager();
-    this.systemManager = new SystemManager();
 
     // 创建一个空的Archetype，用于存储没有组件的实体
     this.archetypes.push(new Archetype([]));
@@ -197,14 +196,14 @@ export class World {
    * @param system 系统实例
    */
   registerSystem(system: System): void {
-    this.systemManager.registerSystem(system);
+    if (this.systems.includes(system)) {
+      throw new Error(`System ${system.name} already registered`);
+    }
+    this.systems.push(system);
   }
 
-  /**
-   * 初始化所有系统
-   */
-  initSystems(): void {
-    this.systemManager.initSystems(this);
+  createQuery(): QueryBuilder {
+    return new QueryBuilder(this);
   }
 
   /**
@@ -227,7 +226,9 @@ export class World {
    * @param deltaTime 时间间隔
    */
   update(deltaTime: number): void {
-    this.systemManager.updateSystems(this, deltaTime);
+    for (const system of this.systems) {
+      system.call(this, this, deltaTime);
+    }
     this.executeDeferredFunctions();
   }
 
@@ -265,5 +266,13 @@ export class World {
 
   getEntityArchetype(entity: Entity): Archetype | undefined {
     return this.entityArchetypes[entity];
+  }
+
+  /**
+   * 获取所有Archetype
+   * @returns 所有Archetype的数组
+   */
+  getArchetypes(): Archetype[] {
+    return this.archetypes;
   }
 }
