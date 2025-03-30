@@ -25,6 +25,14 @@ export class Bitset {
   }
 
   /**
+   * Get the number of bits in the bitset
+   * @returns The number of bits in the bitset
+   */
+  get length(): number {
+    return this.bits.length * 32;
+  }
+
+  /**
    * Set a bit at the specified position
    * @param pos Bit position to set
    */
