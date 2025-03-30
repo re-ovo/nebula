@@ -24,6 +24,14 @@ export class Bitset {
     this.bits = new Uint32Array(numInts);
   }
 
+  static fromArray(array: number[]): Bitset {
+    const bitset = new Bitset(array.length);
+    for (let i = 0; i < array.length; i++) {
+      bitset.set(array[i]);
+    }
+    return bitset;
+  }
+
   /**
    * Get the number of bits in the bitset
    * @returns The number of bits in the bitset
@@ -122,6 +130,30 @@ export class Bitset {
       }
     }
     return true;
+  }
+
+  /**
+   * Convert the bitset to an array of numbers
+   *
+   * Example:
+   * ```ts
+   * const bits = new Bitset(100);
+   * bits.set(5);
+   * bits.set(10);
+   * bits.toArray(); // [5, 10]
+   * ```
+   * @returns Array of numbers
+   */
+  toArray(): number[] {
+    const result: number[] = [];
+    for (let i = 0; i < this.bits.length; i++) {
+      for (let j = 0; j < 32; j++) {
+        if (this.test(i * 32 + j)) {
+          result.push(i * 32 + j);
+        }
+      }
+    }
+    return result;
   }
 
   /**

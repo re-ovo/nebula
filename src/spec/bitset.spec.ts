@@ -125,4 +125,13 @@ describe("Bitset", () => {
       expect(bitset1.equals(bitset2)).toBe(true);
     });
   });
+
+  describe("toArray", () => {
+    it("应该正确将Bitset转换为数组", () => {
+      const bitset = new Bitset(100);
+      bitset.set(5);
+      bitset.set(10);
+      expect(bitset.toArray()).toEqual([5, 10]);
+    });
+  });
 });
