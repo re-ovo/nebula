@@ -5,11 +5,7 @@ import { Bitset } from "@/utils/bitset";
 
 export type ComponentList = unknown[];
 
-/**
- * Archetype - 相同组件结构的实体集合
- *
- * 每个Archetype代表特定的组件组合，包含拥有完全相同组件集的实体
- */
+/** 相同组件结构的实体集合 */
 export class Archetype {
   /** 该Archetype的组件签名 - 表示这个Archetype包含哪些组件 */
   readonly signature: Signature;
@@ -43,6 +39,9 @@ export class Archetype {
       throw new Error(`Entity ${entity} already exists in archetype`);
     }
     const denseIndex = this.entities.getDenseIndex(entity);
+    if (denseIndex === undefined) {
+      throw new Error(`Entity ${entity} does not exist in archetype`);
+    }
     for (const cid of this.componentTypeIds) {
       const componentArray = this.components.get(cid) || [];
       componentArray[denseIndex] = components.get(cid);
@@ -52,6 +51,9 @@ export class Archetype {
 
   removeEntity(entity: Entity) {
     const denseIndex = this.entities.getDenseIndex(entity);
+    if (denseIndex === undefined) {
+      throw new Error(`Entity ${entity} does not exist in archetype`);
+    }
     for (const cid of this.componentTypeIds) {
       const componentArray = this.components.get(cid) || [];
       componentArray[denseIndex] = undefined;
@@ -61,20 +63,37 @@ export class Archetype {
   }
 
   addComponent(entity: Entity, typeId: ComponentTypeId, component: unknown) {
+    if (!this.hasComponent(typeId)) {
+      throw new Error(`Component type ${typeId} does not exist in archetype`);
+    }
     const denseIndex = this.entities.getDenseIndex(entity);
+    if (denseIndex === undefined) {
+      throw new Error(`Entity ${entity} does not exist in archetype`);
+    }
     const componentArray = this.components.get(typeId) || [];
     componentArray[denseIndex] = component;
     this.components.set(typeId, componentArray);
   }
 
   getComponent(entity: Entity, componentTypeId: ComponentTypeId): unknown {
+    if (!this.hasComponent(componentTypeId)) {
+      throw new Error(
+        `Component type ${componentTypeId} does not exist in archetype`,
+      );
+    }
     const denseIndex = this.entities.getDenseIndex(entity);
+    if (denseIndex === undefined) {
+      throw new Error(`Entity ${entity} does not exist in archetype`);
+    }
     const componentArray = this.components.get(componentTypeId) || [];
     return componentArray[denseIndex];
   }
 
   getComponents(entity: Entity): Map<ComponentTypeId, unknown> {
     const denseIndex = this.entities.getDenseIndex(entity);
+    if (denseIndex === undefined) {
+      throw new Error(`Entity ${entity} does not exist in archetype`);
+    }
     return new Map(
       this.componentTypeIds.map((cid) => [
         cid,
