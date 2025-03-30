@@ -1,3 +1,8 @@
 import { World } from "./world";
 
-export type System = (world: World, deltaTime: number) => void;
+export type System = (context: SystemContext) => void;
+
+export type SystemContext = {
+  world: World;
+  deltaTime: number;
+};

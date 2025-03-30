@@ -7,7 +7,7 @@ import {
 } from "./component";
 import { Entity, EntityManager } from "./entity";
 import { QueryBuilder } from "./query";
-import { System } from "./system";
+import { System, SystemContext } from "./system";
 
 const EMPTY_COMPONENT_MAP = new Map<ComponentTypeId, unknown>();
 
@@ -226,8 +226,12 @@ export class World {
    * @param deltaTime 时间间隔
    */
   update(deltaTime: number): void {
+    const context: SystemContext = {
+      world: this,
+      deltaTime,
+    };
     for (const system of this.systems) {
-      system.call(this, this, deltaTime);
+      system(context);
     }
     this.executeDeferredFunctions();
   }
