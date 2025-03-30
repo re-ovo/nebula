@@ -13,11 +13,14 @@ TODO
 
 ## 📚 Documentation
 
-TODO
+You can find the documentation at our [website](https://TODO.net).
+
 
 ## 🤝 Contributing
 
-TODO
+You can contribute to this project by reporting issues, suggesting features, or submitting pull requests.
+
+Documentation is available in the [docs](./docs/README.md) directory.
 
 ## 📄 License
 
