@@ -129,29 +129,37 @@ export class Query<C extends Record<string, unknown>>
     });
   }
 
-  /**
-   * 实现迭代器接口，允许使用for...of循环
-   */
-  *[Symbol.iterator](): Iterator<QueryEntity<C>> {
-    for (const archetype of this.matchingArchetypes) {
-      for (const entity of archetype.entities) {
-        const components: Record<string, unknown> = {};
+  forEach(callback: (entity: QueryEntity<C>) => void): void {
+    const ctx: { entity: Entity; components: C } = {
+      entity: 0,
+      components: {} as C,
+    };
 
-        // 获取每个请求的组件
-        for (const [typeId, key] of this.componentMap.entries()) {
-          components[key] = archetype.getComponent(entity, typeId);
-        }
-
-        yield { entity, components: components as C };
+    this.matchingArchetypes.forEach((archetype) => {
+      const components = archetype.getComponentStorage();
+      for (let i = 0; i < archetype.getComponentCount(); i++) {
+        this.componentMap.forEach((key, typeId) => {
+          const component = components.get(typeId)?.[i];
+          if (component) {
+            // @ts-expect-error ignore type error
+            ctx.components[key] = component[1];
+            ctx.entity = component[0];
+          }
+        });
+        callback(ctx);
       }
-    }
+    });
   }
 
   /**
    * 获取查询结果数组
    */
   getEntities(): QueryEntity<C>[] {
-    return Array.from(this);
+    const result: QueryEntity<C>[] = [];
+    this.forEach((entity) => {
+      result.push(entity);
+    });
+    return result;
   }
 
   /**

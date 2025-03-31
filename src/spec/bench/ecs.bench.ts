@@ -36,7 +36,7 @@ class TraditionalEntity {
 }
 
 describe("ECS", () => {
-  const ENTITY_COUNT = 10000;
+  const ENTITY_COUNT = 50000;
 
   describe("Entity Creation", () => {
     bench("ECS - Create entities with components", () => {
@@ -75,9 +75,14 @@ describe("ECS", () => {
 
     for (let i = 0; i < ENTITY_COUNT; i++) {
       const entity = ecsWorld.createEntity();
-      ecsWorld.addComponent(entity, new Position(i, i, i));
-      ecsWorld.addComponent(entity, new Velocity(1, 2, 3));
-      if (i % 10 === 0) {
+      if (i % 3 === 0) {
+        ecsWorld.addComponent(entity, new Position(i, i, i));
+        ecsWorld.addComponent(entity, new Velocity(1, 2, 3));
+      } else if (i % 3 === 1) {
+        ecsWorld.addComponent(entity, new Position(i, i, i));
+        ecsWorld.addComponent(entity, new Velocity(1, 2, 3));
+        ecsWorld.addComponent(entity, new Health(100));
+      } else {
         ecsWorld.addComponent(entity, new Health(100));
       }
     }
@@ -93,23 +98,28 @@ describe("ECS", () => {
 
     for (let i = 0; i < ENTITY_COUNT; i++) {
       const entity = new TraditionalEntity(i);
-      entity.position = new Position(i, i, i);
-      entity.velocity = new Velocity(1, 2, 3);
-      if (i % 10 === 0) {
+      if (i % 3 === 0) {
+        entity.position = new Position(i, i, i);
+        entity.velocity = new Velocity(1, 2, 3);
+      } else if (i % 3 === 1) {
+        entity.position = new Position(i, i, i);
+        entity.velocity = new Velocity(1, 2, 3);
+        entity.health = new Health(100);
+      } else {
         entity.health = new Health(100);
       }
       traditionalEntities.push(entity);
     }
 
     bench("ECS - Query and update with cached query", () => {
-      for (const { components } of ecsQuery) {
+      ecsQuery.forEach(({ components }) => {
         const position = components.position;
         const velocity = components.velocity;
 
         position.x += velocity.x;
         position.y += velocity.y;
         position.z += velocity.z;
-      }
+      });
     });
 
     bench("Traditional - Update objects", () => {

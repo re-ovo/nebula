@@ -3,7 +3,11 @@ import { Entity } from "./entity";
 import { ComponentTypeId, Signature } from "./component";
 import { Bitset } from "@/utils/bitset";
 
-export type ComponentList = unknown[];
+// 组件元素 - 包含实体ID和组件实例
+export type ComponentEl = unknown | undefined;
+
+// 组件列表
+export type ComponentList = ComponentEl[];
 
 /** 相同组件结构的实体集合 */
 export class Archetype {
@@ -34,7 +38,7 @@ export class Archetype {
     return this.componentTypeIds.includes(componentTypeId);
   }
 
-  addEntity(entity: Entity, components: Map<ComponentTypeId, unknown>) {
+  addEntity(entity: Entity, components: Map<ComponentTypeId, ComponentEl>) {
     if (!this.entities.add(entity)) {
       throw new Error(`Entity ${entity} already exists in archetype`);
     }
@@ -77,7 +81,10 @@ export class Archetype {
     this.components.set(typeId, componentArray);
   }
 
-  getComponent(entity: Entity, componentTypeId: ComponentTypeId): unknown {
+  getComponent(
+    entity: Entity,
+    componentTypeId: ComponentTypeId,
+  ): unknown | undefined {
     if (!this.componentTypeIds.includes(componentTypeId)) return undefined;
     const denseIndex = this.entities.getDenseIndex(entity);
     if (denseIndex === undefined) {
@@ -87,7 +94,7 @@ export class Archetype {
     return componentArray[denseIndex];
   }
 
-  getComponents(entity: Entity): Map<ComponentTypeId, unknown> {
+  getComponents(entity: Entity): Map<ComponentTypeId, ComponentEl> {
     const denseIndex = this.entities.getDenseIndex(entity);
     if (denseIndex === undefined) {
       throw new Error(`Entity ${entity} does not exist in archetype`);
@@ -98,6 +105,10 @@ export class Archetype {
         this.components.get(cid)?.[denseIndex],
       ]),
     );
+  }
+
+  getComponentStorage(): Map<ComponentTypeId, ComponentList> {
+    return this.components;
   }
 
   getComponentCount(): number {

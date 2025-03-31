@@ -1,5 +1,5 @@
 import { Bitset } from "@/utils/bitset";
-import { Archetype } from "./archetype";
+import { Archetype, ComponentEl } from "./archetype";
 import {
   ComponentConstructor,
   ComponentManager,
@@ -10,7 +10,7 @@ import { Entity, EntityManager } from "./entity";
 import { QueryBuilder } from "./query";
 import { System, SystemContext } from "./system";
 
-const EMPTY_COMPONENT_MAP = new Map<ComponentTypeId, unknown>();
+const EMPTY_COMPONENT_MAP = new Map<ComponentTypeId, ComponentEl>();
 
 /**
  * ECS世界 - 整个ECS的核心

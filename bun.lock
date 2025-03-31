@@ -10,6 +10,7 @@
       },
       "devDependencies": {
         "@eslint/js": "^9.23.0",
+        "@lastolivegames/becsy": "^0.15.5",
         "@tailwindcss/vite": "^4.0.15",
         "@types/node": "^22.13.12",
         "@types/react": "^19.0.12",
@@ -181,6 +182,8 @@
     "@jridgewell/sourcemap-codec": ["@jridgewell/sourcemap-codec@1.5.0", "", {}, "sha512-gv3ZRaISU3fjPAgNsriBRqGWQL6quFx04YMPW/zD8XMLsU32mhCCbfbO6KZFLjvYpCZ8zyDEgqsgf+PwPaM7GQ=="],
 
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.25", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ=="],
+
+    "@lastolivegames/becsy": ["@lastolivegames/becsy@0.15.5", "", {}, "sha512-RZEL52er3eH+zpczz2xPyVIxVId+tx0pfTRxYjvE4Vi14plgHzqX7q+4TTJvJDmaxR9pdVjGwFnrY0Oe23fN7Q=="],
 
     "@microsoft/api-extractor": ["@microsoft/api-extractor@7.51.1", "", { "dependencies": { "@microsoft/api-extractor-model": "7.30.3", "@microsoft/tsdoc": "~0.15.1", "@microsoft/tsdoc-config": "~0.17.1", "@rushstack/node-core-library": "5.11.0", "@rushstack/rig-package": "0.5.3", "@rushstack/terminal": "0.15.0", "@rushstack/ts-command-line": "4.23.5", "lodash": "~4.17.15", "minimatch": "~3.0.3", "resolve": "~1.22.1", "semver": "~7.5.4", "source-map": "~0.6.1", "typescript": "5.7.3" }, "bin": { "api-extractor": "bin/api-extractor" } }, "sha512-VoFvIeYXme8QctXDkixy1KIn750kZaFy2snAEOB3nhDFfbBcJNEcvBrpCIQIV09MqI4g9egKUkg+/12WMRC77w=="],
 
