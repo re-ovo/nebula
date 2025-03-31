@@ -1,3 +1,4 @@
+import { Bitset } from "@/utils/bitset";
 import { Archetype } from "./archetype";
 import {
   ComponentConstructor,
@@ -181,11 +182,7 @@ export class World {
     entity: Entity,
     componentConstructor: ComponentConstructor<T>,
   ): T | undefined {
-    const archetype = this.entityArchetypes[entity];
-    if (!archetype) {
-      throw new Error(`Entity ${entity} does not have an archetype`);
-    }
-
+    const archetype = this.entityArchetypes[entity]!;
     const componentTypeId =
       this.componentManager.getComponentType(componentConstructor);
     return archetype.getComponent(entity, componentTypeId) as T;
@@ -245,23 +242,17 @@ export class World {
     signature: Signature | ComponentTypeId[],
     createIfNotFound: boolean = false,
   ): Archetype | undefined {
-    let archetype = undefined;
-
     if (Array.isArray(signature)) {
-      archetype = this.archetypes.find((archetype) =>
-        signature.every((type) => archetype.signature.test(type)),
-      );
-    } else {
-      archetype = this.archetypes.find((archetype) =>
-        archetype.signature.equals(signature),
-      );
+      signature = Bitset.fromArray(signature);
     }
+
+    let archetype = this.archetypes.find((archetype) =>
+      archetype.signature.equals(signature),
+    );
 
     // can't find archetype, create a new one if createIfNotFound is true
     if (!archetype && createIfNotFound) {
-      archetype = Array.isArray(signature)
-        ? new Archetype(signature)
-        : new Archetype(signature.toArray());
+      archetype = new Archetype(signature.toArray());
       this.archetypes.push(archetype);
     }
 
