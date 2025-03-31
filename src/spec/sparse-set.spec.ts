@@ -102,6 +102,18 @@ describe("SparseSet", () => {
     });
   });
 
+  describe("getDenseIndex", () => {
+    it("应该返回正确的密集索引", () => {
+      sparseSet.add(3);
+      sparseSet.add(5);
+      sparseSet.add(7);
+
+      expect(sparseSet.getDenseIndex(3)).toBe(0);
+      expect(sparseSet.getDenseIndex(5)).toBe(1);
+      expect(sparseSet.getDenseIndex(7)).toBe(2);
+    });
+  });
+
   describe("边界情况", () => {
     it("应该处理不连续的实体ID", () => {
       sparseSet.add(0);

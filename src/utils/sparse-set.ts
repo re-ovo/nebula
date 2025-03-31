@@ -39,7 +39,7 @@ export class SparseSet {
   }
 
   getDenseIndex(sparseIndex: number): number | undefined {
-    return this.dense[sparseIndex];
+    return this.sparse[sparseIndex];
   }
 
   /**
