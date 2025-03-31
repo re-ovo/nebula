@@ -166,28 +166,6 @@ export class Query<C extends Record<string, unknown>>
   }
 
   /**
-   * 获取第一个匹配的实体和组件
-   */
-  first(): QueryEntity<C> | undefined {
-    for (const archetype of this.matchingArchetypes) {
-      if (archetype.entities.size() > 0) {
-        const entities = archetype.entities.entities();
-        if (entities.length > 0) {
-          const entity = entities[0];
-          const components: Record<string, unknown> = {};
-
-          for (const [typeId, key] of this.componentMap.entries()) {
-            components[key] = archetype.getComponent(entity, typeId);
-          }
-
-          return { entity, components: components as C };
-        }
-      }
-    }
-    return undefined;
-  }
-
-  /**
    * 刷新查询，更新匹配的原型
    * 当世界状态变化较大时调用此方法
    */
