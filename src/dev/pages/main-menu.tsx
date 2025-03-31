@@ -1,9 +1,7 @@
-import { test } from "@/ecs/example";
-
 export default function MainMenu() {
   const runTest = () => {
     console.time("test");
-    test();
+    // TODO: 测试
     console.timeEnd("test");
   };
   return (
