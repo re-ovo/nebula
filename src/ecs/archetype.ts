@@ -111,7 +111,7 @@ export class Archetype {
     return this.components;
   }
 
-  getComponentCount(): number {
+  getEntityCount(): number {
     return this.entities.size();
   }
 }

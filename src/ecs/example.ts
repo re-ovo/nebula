@@ -21,7 +21,7 @@ class Health {
 }
 
 const world = new World();
-const ENTITY_COUNT = 2;
+const ENTITY_COUNT = 5;
 
 world.registerComponent(Position);
 world.registerComponent(Velocity);
@@ -38,23 +38,17 @@ for (let i = 0; i < ENTITY_COUNT; i++) {
 
 const query = world
   .createQuery()
-  .with("position", Position)
-  .with("velocity", Velocity)
+  .with(Position)
+  .with(Velocity)
   .without(Health)
   .build();
 
 console.log("query", query.count());
 export function test() {
-  query.forEach(({ components, entity }) => {
-    // console.log("#forEach", entity, components);
-    const position = components.position;
-    const velocity = components.velocity;
-    // console.log(entity, position, velocity);
+  query.forEach((entity, position, velocity) => {
     position.x += velocity.x;
     position.y += velocity.y;
     position.z += velocity.z;
     console.log(entity, position, velocity);
   });
 }
-
-test();

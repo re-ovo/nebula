@@ -1,6 +1,7 @@
 import { describe, bench, beforeEach } from "vitest";
 import { World } from "../../ecs/world";
 import { Query } from "../../ecs/query";
+import * as uecs from "uecs";
 
 // 定义测试用的组件
 class Position {
@@ -87,10 +88,10 @@ describe("ECS", () => {
       }
     }
 
-    const ecsQuery: Query<{ position: Position; velocity: Velocity }> = ecsWorld
+    const ecsQuery = ecsWorld
       .createQuery()
-      .with("position", Position)
-      .with("velocity", Velocity)
+      .with(Position)
+      .with(Velocity)
       .without(Health)
       .build();
 
@@ -111,11 +112,24 @@ describe("ECS", () => {
       traditionalEntities.push(entity);
     }
 
-    bench("ECS - Query and update with cached query", () => {
-      ecsQuery.forEach(({ components }) => {
-        const position = components.position;
-        const velocity = components.velocity;
+    const uecsWorld = new uecs.World();
+    for (let i = 0; i < ENTITY_COUNT; i++) {
+      if (i % 3 === 0) {
+        uecsWorld.create(new Position(0, 0, 0), new Velocity(1, 2, 3));
+      } else if (i % 3 === 1) {
+        uecsWorld.create(
+          new Position(0, 0, 0),
+          new Velocity(1, 2, 3),
+          new Health(100),
+        );
+      } else {
+        uecsWorld.create(new Health(100));
+      }
+    }
+    const uecsView = uecsWorld.view(Position, Velocity);
 
+    bench("ECS - Query and update with cached query", () => {
+      ecsQuery.forEach((entity, position, velocity) => {
         position.x += velocity.x;
         position.y += velocity.y;
         position.z += velocity.z;
@@ -131,6 +145,14 @@ describe("ECS", () => {
           entity.position.z += entity.velocity.z;
         }
       }
+    });
+
+    bench("uecs - update objects", () => {
+      uecsView.each((entity, position, velocity) => {
+        position.x += velocity.x;
+        position.y += velocity.y;
+        position.z += velocity.z;
+      });
     });
   });
 });

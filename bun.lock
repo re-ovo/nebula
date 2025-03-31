@@ -4,13 +4,13 @@
     "": {
       "name": "vite-typescript-npm-package",
       "dependencies": {
+        "uecs": "^0.4.2",
         "wesl": "^0.6.0-rc3",
         "wgpu-matrix": "^3.4.0",
         "wgsl_reflect": "^1.2.0",
       },
       "devDependencies": {
         "@eslint/js": "^9.23.0",
-        "@lastolivegames/becsy": "^0.15.5",
         "@tailwindcss/vite": "^4.0.15",
         "@types/node": "^22.13.12",
         "@types/react": "^19.0.12",
@@ -182,8 +182,6 @@
     "@jridgewell/sourcemap-codec": ["@jridgewell/sourcemap-codec@1.5.0", "", {}, "sha512-gv3ZRaISU3fjPAgNsriBRqGWQL6quFx04YMPW/zD8XMLsU32mhCCbfbO6KZFLjvYpCZ8zyDEgqsgf+PwPaM7GQ=="],
 
     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.25", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ=="],
-
-    "@lastolivegames/becsy": ["@lastolivegames/becsy@0.15.5", "", {}, "sha512-RZEL52er3eH+zpczz2xPyVIxVId+tx0pfTRxYjvE4Vi14plgHzqX7q+4TTJvJDmaxR9pdVjGwFnrY0Oe23fN7Q=="],
 
     "@microsoft/api-extractor": ["@microsoft/api-extractor@7.51.1", "", { "dependencies": { "@microsoft/api-extractor-model": "7.30.3", "@microsoft/tsdoc": "~0.15.1", "@microsoft/tsdoc-config": "~0.17.1", "@rushstack/node-core-library": "5.11.0", "@rushstack/rig-package": "0.5.3", "@rushstack/terminal": "0.15.0", "@rushstack/ts-command-line": "4.23.5", "lodash": "~4.17.15", "minimatch": "~3.0.3", "resolve": "~1.22.1", "semver": "~7.5.4", "source-map": "~0.6.1", "typescript": "5.7.3" }, "bin": { "api-extractor": "bin/api-extractor" } }, "sha512-VoFvIeYXme8QctXDkixy1KIn750kZaFy2snAEOB3nhDFfbBcJNEcvBrpCIQIV09MqI4g9egKUkg+/12WMRC77w=="],
 
@@ -820,6 +818,8 @@
     "typescript": ["typescript@5.8.2", "", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ=="],
 
     "typescript-eslint": ["typescript-eslint@8.27.0", "", { "dependencies": { "@typescript-eslint/eslint-plugin": "8.27.0", "@typescript-eslint/parser": "8.27.0", "@typescript-eslint/utils": "8.27.0" }, "peerDependencies": { "eslint": "^8.57.0 || ^9.0.0", "typescript": ">=4.8.4 <5.9.0" } }, "sha512-ZZ/8+Y0rRUMuW1gJaPtLWe4ryHbsPLzzibk5Sq+IFa2aOH1Vo0gPr1fbA6pOnzBke7zC2Da4w8AyCgxKXo3lqA=="],
+
+    "uecs": ["uecs@0.4.2", "", {}, "sha512-oPwSibOqllZeBu6U2v/wkqIq/XSiwaf0bff1aJhuPEBOqRWuo8iH/RP+bzPPUDdwQ6vRljIkksy0plmEIfbc3w=="],
 
     "ufo": ["ufo@1.5.4", "", {}, "sha512-UsUk3byDzKd04EyoZ7U4DOlxQaD14JUKQl6/P7wiX4FNvUfm3XL246n9W5AmqwW5RSFJ27NAuM0iLscAOYUiGQ=="],
 

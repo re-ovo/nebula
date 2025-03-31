@@ -6,23 +6,13 @@ import { World } from "./world";
 import { Bitset } from "@/utils/bitset";
 
 /**
- * 查询结果的实体和组件数据
- */
-export type QueryEntity<C extends Record<string, unknown>> = {
-  entity: Entity;
-  components: C;
-};
-
-/**
  * 查询构建器
  * 用于构建类型安全的查询
  */
-export class QueryBuilder<
-  C extends Record<string, unknown> = Record<string, unknown>,
-> {
+export class QueryBuilder<Components extends unknown[] = []> {
   private includeSignature: Signature = new Bitset(8);
   private excludeSignature: Signature = new Bitset(8);
-  private componentMap: Map<ComponentTypeId, string> = new Map();
+  private componentTypes: ComponentConstructor<unknown>[] = [];
   private world: World;
 
   constructor(world: World) {
@@ -31,26 +21,26 @@ export class QueryBuilder<
 
   /**
    * 添加一个必须包含的组件类型
-   * @param componentKey 组件在结果中的键名
    * @param componentConstructor 组件构造函数
    */
-  with<T, K extends string>(
-    componentKey: K,
+  with<T>(
     componentConstructor: ComponentConstructor<T>,
-  ): QueryBuilder<C & { [key in K]: T }> {
+  ): QueryBuilder<[...Components, T]> {
     const componentTypeId = this.world.getComponentTypeId(componentConstructor);
     this.includeSignature.set(componentTypeId);
-    this.componentMap.set(componentTypeId, componentKey);
+    this.componentTypes.push(componentConstructor);
 
     // 强制类型转换，因为TypeScript不能追踪这种动态添加属性的模式
-    return this as unknown as QueryBuilder<C & { [key in K]: T }>;
+    return this as unknown as QueryBuilder<[...Components, T]>;
   }
 
   /**
    * 添加一个必须不包含的组件类型
    * @param componentConstructor 组件构造函数
    */
-  without<T>(componentConstructor: ComponentConstructor<T>): QueryBuilder<C> {
+  without<T>(
+    componentConstructor: ComponentConstructor<T>,
+  ): QueryBuilder<Components> {
     const componentTypeId = this.world.getComponentTypeId(componentConstructor);
     this.excludeSignature.set(componentTypeId);
     return this;
@@ -59,12 +49,12 @@ export class QueryBuilder<
   /**
    * 执行查询并返回查询结果
    */
-  build(): Query<C> {
-    return new Query<C>(
+  build(): Query<Components> {
+    return new Query<Components>(
       this.world,
       this.includeSignature,
       this.excludeSignature,
-      this.componentMap,
+      this.componentTypes,
     );
   }
 }
@@ -73,13 +63,12 @@ export class QueryBuilder<
  * 查询结果
  * 支持迭代和获取结果数组
  */
-export class Query<C extends Record<string, unknown>>
-  implements Iterable<QueryEntity<C>>
-{
+export class Query<Components extends unknown[]> {
   private world: World;
   private includeSignature: Signature;
   private excludeSignature: Signature;
-  private componentMap: Map<ComponentTypeId, string>;
+  private componentTypes: ComponentConstructor<unknown>[];
+  private componentTypeIds: ComponentTypeId[] = [];
 
   /** 所有匹配的Archetype */
   private matchingArchetypes: Archetype[] = [];
@@ -88,12 +77,15 @@ export class Query<C extends Record<string, unknown>>
     world: World,
     includeSignature: Signature,
     excludeSignature: Signature,
-    componentMap: Map<ComponentTypeId, string>,
+    componentTypes: ComponentConstructor<unknown>[],
   ) {
     this.world = world;
     this.includeSignature = includeSignature;
     this.excludeSignature = excludeSignature;
-    this.componentMap = componentMap;
+    this.componentTypes = componentTypes;
+    this.componentTypeIds = componentTypes.map((t) =>
+      world.getComponentTypeId(t),
+    );
     this.findMatchingArchetypes();
   }
 
@@ -129,24 +121,25 @@ export class Query<C extends Record<string, unknown>>
     });
   }
 
-  forEach(callback: (entity: QueryEntity<C>) => void): void {
-    const ctx: { entity: Entity; components: C } = {
-      entity: 0,
-      components: {} as C,
-    };
-
+  forEach<Args extends [...Components]>(
+    callback: (entity: Entity, ...components: Args) => void,
+  ): void {
     this.matchingArchetypes.forEach((archetype) => {
       const components = archetype.getComponentStorage();
-      for (let i = 0; i < archetype.getComponentCount(); i++) {
-        this.componentMap.forEach((key, typeId) => {
+      for (let i = 0; i < archetype.getEntityCount(); i++) {
+        const entity = archetype.entities.getSparseIndex(i)!;
+        const componentArgs: unknown[] = [];
+
+        // 收集所有组件
+        for (const typeId of this.componentTypeIds) {
           const component = components.get(typeId)?.[i];
           if (component) {
-            // @ts-expect-error ignore type error
-            ctx.components[key] = component;
+            componentArgs.push(component);
           }
-        });
-        ctx.entity = archetype.entities.getSparseIndex(i)!;
-        callback(ctx);
+        }
+
+        // 调用回调函数
+        callback(entity, ...(componentArgs as Args));
       }
     });
   }
@@ -154,11 +147,27 @@ export class Query<C extends Record<string, unknown>>
   /**
    * 获取查询结果数组
    */
-  getEntities(): QueryEntity<C>[] {
-    const result: QueryEntity<C>[] = [];
-    this.forEach((entity) => {
-      result.push(entity);
+  getEntities(): [Entity, ...Components][] {
+    const result: [Entity, ...Components][] = [];
+
+    this.matchingArchetypes.forEach((archetype) => {
+      const components = archetype.getComponentStorage();
+      for (let i = 0; i < archetype.getEntityCount(); i++) {
+        const entity = archetype.entities.getSparseIndex(i)!;
+        const componentArgs: unknown[] = [];
+
+        // 收集所有组件
+        for (const typeId of this.componentTypeIds) {
+          const component = components.get(typeId)?.[i];
+          if (component) {
+            componentArgs.push(component);
+          }
+        }
+
+        result.push([entity, ...componentArgs] as [Entity, ...Components]);
+      }
     });
+
     return result;
   }
 
@@ -177,7 +186,7 @@ export class Query<C extends Record<string, unknown>>
    * 刷新查询，更新匹配的原型
    * 当世界状态变化较大时调用此方法
    */
-  refresh(): Query<C> {
+  refresh(): Query<Components> {
     this.findMatchingArchetypes();
     return this;
   }
