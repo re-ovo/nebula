@@ -31,7 +31,7 @@ export class Archetype {
   }
 
   hasComponent(componentTypeId: ComponentTypeId): boolean {
-    return this.components.has(componentTypeId);
+    return this.componentTypeIds.includes(componentTypeId);
   }
 
   addEntity(entity: Entity, components: Map<ComponentTypeId, unknown>) {
@@ -64,7 +64,9 @@ export class Archetype {
 
   addComponent(entity: Entity, typeId: ComponentTypeId, component: unknown) {
     if (!this.hasComponent(typeId)) {
-      throw new Error(`Component type ${typeId} does not exist in archetype`);
+      throw new Error(
+        `Component type ${typeId} does not exist in archetype: ${this.componentTypeIds}`,
+      );
     }
     const denseIndex = this.entities.getDenseIndex(entity);
     if (denseIndex === undefined) {
@@ -76,11 +78,7 @@ export class Archetype {
   }
 
   getComponent(entity: Entity, componentTypeId: ComponentTypeId): unknown {
-    if (!this.hasComponent(componentTypeId)) {
-      throw new Error(
-        `Component type ${componentTypeId} does not exist in archetype`,
-      );
-    }
+    if (!this.componentTypeIds.includes(componentTypeId)) return undefined;
     const denseIndex = this.entities.getDenseIndex(entity);
     if (denseIndex === undefined) {
       throw new Error(`Entity ${entity} does not exist in archetype`);
