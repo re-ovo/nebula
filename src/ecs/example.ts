@@ -1,3 +1,4 @@
+import { SystemContext } from "./system";
 import { World } from "./world";
 
 class Position {
@@ -43,12 +44,16 @@ const query = world
   .without(Health)
   .build();
 
-console.log("query", query.count());
-export function test() {
+const system = (ctx: SystemContext) => {
+  const { world, deltaTime } = ctx;
   query.forEach((entity, position, velocity) => {
     position.x += velocity.x;
     position.y += velocity.y;
     position.z += velocity.z;
     console.log(entity, position, velocity);
   });
-}
+};
+
+world.registerSystem(system);
+
+world.update(0.1);

@@ -9,6 +9,7 @@ import {
 import { Entity, EntityManager } from "./entity";
 import { QueryBuilder } from "./query";
 import { System, SystemContext } from "./system";
+import { EcsPlugin } from "./plugin";
 
 const EMPTY_COMPONENT_MAP = new Map<ComponentTypeId, ComponentEl>();
 
@@ -24,6 +25,10 @@ export class World {
   private componentManager: ComponentManager;
   /** 系统管理器 */
   private systems: System[] = [];
+  /** 插件 */
+  private plugins: EcsPlugin[] = [];
+  /** 是否已初始化 */
+  private initialized = false;
 
   /** 所有Archetype */
   private archetypes: Archetype[] = [];
@@ -199,6 +204,14 @@ export class World {
     this.systems.push(system);
   }
 
+  /**
+   * 注册插件
+   * @param plugin 插件实例
+   */
+  registerPlugin(plugin: EcsPlugin): void {
+    this.plugins.push(plugin);
+  }
+
   createQuery(): QueryBuilder {
     return new QueryBuilder(this);
   }
@@ -218,11 +231,22 @@ export class World {
     this.deferredFunctions.length = 0;
   }
 
+  private executePlugins(): void {
+    for (const plugin of this.plugins) {
+      plugin.setup(this);
+    }
+  }
+
   /**
    * 更新系统
    * @param deltaTime 时间间隔
    */
   update(deltaTime: number): void {
+    if (!this.initialized) {
+      this.executePlugins();
+      this.initialized = true;
+    }
+
     const context: SystemContext = {
       world: this,
       deltaTime,
