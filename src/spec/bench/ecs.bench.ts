@@ -71,18 +71,19 @@ describe("ECS", () => {
 
     ecsWorld.registerComponent(Position);
     ecsWorld.registerComponent(Velocity);
-
-    const ecsQuery: Query<{ position: Position; velocity: Velocity }> = ecsWorld
-      .createQuery()
-      .with("position", Position)
-      .with("velocity", Velocity)
-      .build();
+    ecsWorld.registerComponent(Health);
 
     for (let i = 0; i < ENTITY_COUNT; i++) {
       const entity = ecsWorld.createEntity();
       ecsWorld.addComponent(entity, new Position(i, i, i));
       ecsWorld.addComponent(entity, new Velocity(1, 2, 3));
     }
+
+    const ecsQuery: Query<{ position: Position; velocity: Velocity }> = ecsWorld
+      .createQuery()
+      .with("position", Position)
+      .with("velocity", Velocity)
+      .build();
 
     const traditionalEntities: TraditionalEntity[] = [];
 
@@ -95,8 +96,8 @@ describe("ECS", () => {
 
     bench("ECS - Query and update with cached query", () => {
       for (const { components } of ecsQuery) {
-        const position = components.position as Position;
-        const velocity = components.velocity as Velocity;
+        const position = components.position;
+        const velocity = components.velocity;
 
         position.x += velocity.x;
         position.y += velocity.y;

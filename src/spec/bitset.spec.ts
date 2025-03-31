@@ -111,7 +111,7 @@ describe("Bitset", () => {
 
   describe("equals", () => {
     it("应该正确比较两个Bitset", () => {
-      const bitset1 = new Bitset(100);
+      const bitset1 = new Bitset(50);
       const bitset2 = new Bitset(100);
 
       bitset1.set(0);

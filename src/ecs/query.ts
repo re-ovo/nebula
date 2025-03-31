@@ -20,8 +20,8 @@ export type QueryEntity<C extends Record<string, unknown>> = {
 export class QueryBuilder<
   C extends Record<string, unknown> = Record<string, unknown>,
 > {
-  private includeSignature: Signature = new Bitset(0);
-  private excludeSignature: Signature = new Bitset(0);
+  private includeSignature: Signature = new Bitset(8);
+  private excludeSignature: Signature = new Bitset(8);
   private componentMap: Map<ComponentTypeId, string> = new Map();
   private world: World;
 

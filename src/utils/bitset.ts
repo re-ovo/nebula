@@ -1,27 +1,30 @@
 /**
- * A bitset implementation that supports arbitrary number of bits
+ * A bitset implementation that supports arbitrary number of bits with auto-expansion
  *
  * Example:
  * ```ts
- * const bits = new Bitset(100); // Create bitset with 100 bits
+ * const bits = new Bitset(100); // Create bitset with initial capacity of 100 bits
  * bits.set(5);    // Set bit at position 5
  * bits.test(5);   // Returns true
  * bits.clear(5);  // Clear bit at position 5
  * bits.test(5);   // Returns false
  * bits.toggle(5); // Toggle bit at position 5
+ * bits.set(200);  // Automatically expands to accommodate bit at position 200
  * ```
  */
 export class Bitset {
   private bits: Uint32Array;
+  private capacity: number;
 
   /**
-   * Create a new bitset with the specified number of bits
-   * @param numBits Number of bits to store
+   * Create a new bitset with the specified initial capacity
+   * @param initialCapacity Initial number of bits to store
    */
-  constructor(numBits: number) {
+  constructor(initialCapacity: number = 32) {
     // Calculate number of Uint32 elements needed
-    const numInts = Math.ceil(numBits / 32);
+    const numInts = Math.ceil(initialCapacity / 32);
     this.bits = new Uint32Array(numInts);
+    this.capacity = numInts * 32;
   }
 
   static fromArray(array: number[]): Bitset {
@@ -41,10 +44,34 @@ export class Bitset {
   }
 
   /**
+   * Ensures the bitset has enough capacity to store bits up to the given position
+   * @param pos Position that needs to be accessible
+   */
+  private ensureCapacity(pos: number): void {
+    if (pos >= this.capacity) {
+      // Calculate new size (double the size until it's big enough)
+      let newSize = this.capacity;
+      while (newSize <= pos) {
+        newSize *= 2;
+      }
+
+      // Create new array and copy old values
+      const newBits = new Uint32Array(Math.ceil(newSize / 32));
+      newBits.set(this.bits);
+
+      // Update instance variables
+      this.bits = newBits;
+      this.capacity = newBits.length * 32;
+    }
+  }
+
+  /**
    * Set a bit at the specified position
    * @param pos Bit position to set
    */
   set(pos: number): void {
+    if (pos < 0) throw new Error("Bit position must be non-negative");
+    this.ensureCapacity(pos);
     const idx = Math.floor(pos / 32);
     const bit = pos % 32;
     this.bits[idx] |= 1 << bit;
@@ -55,6 +82,8 @@ export class Bitset {
    * @param pos Bit position to clear
    */
   clear(pos: number): void {
+    if (pos < 0) throw new Error("Bit position must be non-negative");
+    if (pos >= this.capacity) return; // If beyond capacity, bit is already 0
     const idx = Math.floor(pos / 32);
     const bit = pos % 32;
     this.bits[idx] &= ~(1 << bit);
@@ -66,6 +95,8 @@ export class Bitset {
    * @returns True if the bit is set, false otherwise
    */
   test(pos: number): boolean {
+    if (pos < 0) throw new Error("Bit position must be non-negative");
+    if (pos >= this.capacity) return false; // If beyond capacity, bit is 0
     const idx = Math.floor(pos / 32);
     const bit = pos % 32;
     return (this.bits[idx] & (1 << bit)) !== 0;
@@ -76,6 +107,8 @@ export class Bitset {
    * @param pos Bit position to toggle
    */
   toggle(pos: number): void {
+    if (pos < 0) throw new Error("Bit position must be non-negative");
+    this.ensureCapacity(pos);
     const idx = Math.floor(pos / 32);
     const bit = pos % 32;
     this.bits[idx] ^= 1 << bit;
@@ -116,19 +149,23 @@ export class Bitset {
   }
 
   /**
-   * 比较两个Bitset是否相等
-   * @param other 要比较的Bitset
-   * @returns 如果相等则返回true，否则返回false
+   * Compare two Bitsets for equality
+   * @param other The Bitset to compare with
+   * @returns true if equal, false otherwise
    */
   equals(other: Bitset): boolean {
-    if (this.bits.length !== other.bits.length) {
-      return false;
-    }
-    for (let i = 0; i < this.bits.length; i++) {
-      if (this.bits[i] !== other.bits[i]) {
+    // Compare the effective bits rather than just array length
+    const maxLength = Math.max(this.bits.length, other.bits.length);
+
+    for (let i = 0; i < maxLength; i++) {
+      const thisBit = i < this.bits.length ? this.bits[i] : 0;
+      const otherBit = i < other.bits.length ? other.bits[i] : 0;
+
+      if (thisBit !== otherBit) {
         return false;
       }
     }
+
     return true;
   }
 
@@ -169,5 +206,13 @@ export class Bitset {
       result = hexValue + result; // Prepend to maintain bit order
     }
     return result;
+  }
+
+  /**
+   * Get the current capacity of the bitset in bits
+   * @returns The current capacity in bits
+   */
+  getCapacity(): number {
+    return this.capacity;
   }
 }
