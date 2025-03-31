@@ -77,12 +77,16 @@ describe("ECS", () => {
       const entity = ecsWorld.createEntity();
       ecsWorld.addComponent(entity, new Position(i, i, i));
       ecsWorld.addComponent(entity, new Velocity(1, 2, 3));
+      if (i % 10 === 0) {
+        ecsWorld.addComponent(entity, new Health(100));
+      }
     }
 
     const ecsQuery: Query<{ position: Position; velocity: Velocity }> = ecsWorld
       .createQuery()
       .with("position", Position)
       .with("velocity", Velocity)
+      .without(Health)
       .build();
 
     const traditionalEntities: TraditionalEntity[] = [];
@@ -91,6 +95,9 @@ describe("ECS", () => {
       const entity = new TraditionalEntity(i);
       entity.position = new Position(i, i, i);
       entity.velocity = new Velocity(1, 2, 3);
+      if (i % 10 === 0) {
+        entity.health = new Health(100);
+      }
       traditionalEntities.push(entity);
     }
 
@@ -108,7 +115,7 @@ describe("ECS", () => {
     bench("Traditional - Update objects", () => {
       // 只测试更新位置的性能
       for (const entity of traditionalEntities) {
-        if (entity.position && entity.velocity) {
+        if (entity.position && entity.velocity && !entity.health) {
           entity.position.x += entity.velocity.x;
           entity.position.y += entity.velocity.y;
           entity.position.z += entity.velocity.z;
