@@ -123,12 +123,20 @@ describe("Bitset", () => {
 
       bitset2.set(1);
       expect(bitset1.equals(bitset2)).toBe(true);
+
+      expect(Bitset.fromArray([1, 2, 3]).equals(Bitset.fromArray([1, 2]))).toBe(
+        false,
+      );
+
+      expect(
+        Bitset.fromArray([1, 2, 3]).equals(Bitset.fromArray([1, 3, 2])),
+      ).toBe(true);
     });
   });
 
   describe("toArray", () => {
     it("应该正确将Bitset转换为数组", () => {
-      const bitset = new Bitset(100);
+      const bitset = new Bitset();
       bitset.set(5);
       bitset.set(10);
       expect(bitset.toArray()).toEqual([5, 10]);
