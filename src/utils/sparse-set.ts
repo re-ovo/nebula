@@ -42,6 +42,10 @@ export class SparseSet {
     return this.sparse[sparseIndex];
   }
 
+  getSparseIndex(denseIndex: number): number | undefined {
+    return this.dense[denseIndex];
+  }
+
   /**
    * 检查实体是否在集合中
    * @param entity 要检查的实体ID

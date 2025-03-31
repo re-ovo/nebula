@@ -142,10 +142,10 @@ export class Query<C extends Record<string, unknown>>
           const component = components.get(typeId)?.[i];
           if (component) {
             // @ts-expect-error ignore type error
-            ctx.components[key] = component[1];
-            ctx.entity = component[0];
+            ctx.components[key] = component;
           }
         });
+        ctx.entity = archetype.entities.getSparseIndex(i)!;
         callback(ctx);
       }
     });
