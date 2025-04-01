@@ -6,9 +6,15 @@ export class Transform extends Component {
   private _position: Vec3 = vec3.create(0, 0, 0);
   private _rotation: Quat = quat.identity();
   private _scale: Vec3 = vec3.create(1, 1, 1);
+
+  private _worldPosition: Vec3 = vec3.create(0, 0, 0);
+  private _worldRotation: Quat = quat.identity();
+  private _worldScale: Vec3 = vec3.create(1, 1, 1);
+
   private _localMatrix: Mat4 = mat4.identity();
   private _worldMatrix: Mat4 = mat4.identity();
-  private _isDirty: boolean = true;
+
+  private _dirtyFlags: TransformDirty = TransformDirty.LocalAndWorld;
 
   // 位置
   get position(): Vec3 {
@@ -17,7 +23,7 @@ export class Transform extends Component {
 
   set position(value: Vec3) {
     vec3.copy(value, this._position);
-    this._isDirty = true;
+    this.setDirty(TransformDirty.LocalAndWorld);
   }
 
   // 旋转（四元数）
@@ -27,7 +33,7 @@ export class Transform extends Component {
 
   set rotation(value: Quat) {
     quat.copy(value, this._rotation);
-    this._isDirty = true;
+    this.setDirty(TransformDirty.LocalAndWorld);
   }
 
   // 缩放
@@ -37,27 +43,72 @@ export class Transform extends Component {
 
   set scale(value: Vec3) {
     vec3.copy(value, this._scale);
-    this._isDirty = true;
+    this.setDirty(TransformDirty.LocalAndWorld);
+  }
+
+  get worldPosition(): Vec3 {
+    if (this.isDirty(TransformDirty.World)) {
+      this.updateWorldMatrix();
+    }
+    return vec3.clone(this._worldPosition);
+  }
+
+  get worldRotation(): Quat {
+    if (this.isDirty(TransformDirty.World)) {
+      this.updateWorldMatrix();
+    }
+    return quat.clone(this._worldRotation);
+  }
+
+  get worldScale(): Vec3 {
+    if (this.isDirty(TransformDirty.World)) {
+      this.updateWorldMatrix();
+    }
+    return vec3.clone(this._worldScale);
   }
 
   // 获取本地矩阵
   get localMatrix(): Mat4 {
-    if (this._isDirty) {
+    if (this.isDirty(TransformDirty.Local)) {
       this.updateLocalMatrix();
     }
-    return mat4.clone(this._localMatrix);
+    return this._localMatrix;
   }
 
   // 获取世界矩阵
   get worldMatrix(): Mat4 {
-    if (this._isDirty) {
+    if (this.isDirty(TransformDirty.World)) {
       this.updateWorldMatrix();
     }
-    return mat4.clone(this._worldMatrix);
+    return this._worldMatrix;
+  }
+
+  setDirty(flags: TransformDirty): void {
+    this._dirtyFlags |= flags;
+    this.notifyChildren();
+  }
+
+  isDirty(flags: TransformDirty): boolean {
+    return (this._dirtyFlags & flags) !== 0;
+  }
+
+  clearDirty(flags: TransformDirty): void {
+    this._dirtyFlags &= ~flags;
+  }
+
+  private notifyChildren(): void {
+    const entity = this.entity;
+    if (entity && entity.children) {
+      for (const child of entity.children) {
+        if (child.transform) {
+          child.transform.setDirty(TransformDirty.World);
+        }
+      }
+    }
   }
 
   // 更新本地矩阵
-  private updateLocalMatrix(): void {
+  updateLocalMatrix(): void {
     mat4.identity(this._localMatrix);
     mat4.translate(this._localMatrix, this._position, this._localMatrix);
 
@@ -66,12 +117,12 @@ export class Transform extends Component {
 
     mat4.scale(this._localMatrix, this._scale, this._localMatrix);
 
-    this._isDirty = false;
+    this.clearDirty(TransformDirty.Local);
   }
 
   // 更新世界矩阵
-  private updateWorldMatrix(): void {
-    if (this._isDirty) {
+  updateWorldMatrix(): void {
+    if (this.isDirty(TransformDirty.Local)) {
       this.updateLocalMatrix();
     }
 
@@ -83,33 +134,64 @@ export class Transform extends Component {
         this._localMatrix,
         this._worldMatrix,
       );
+
+      // 更新世界位置
+      vec3.transformMat4(
+        this._position,
+        entity.parent.transform.worldMatrix,
+        this._worldPosition,
+      );
+
+      // 更新世界旋转
+      quat.fromMat(this._worldMatrix, this._worldRotation);
+
+      // 更新世界缩放
+      mat4.getScaling(this._worldMatrix, this._worldScale);
     } else {
       // 没有父实体，世界矩阵等于本地矩阵
       mat4.copy(this._localMatrix, this._worldMatrix);
+      vec3.copy(this._position, this._worldPosition);
+      quat.copy(this._rotation, this._worldRotation);
+      vec3.copy(this._scale, this._worldScale);
     }
+
+    this.clearDirty(TransformDirty.World);
   }
 
   // 向前方向（Z轴负方向）
-  get forward(): Vec3 {
-    const worldMatrix = this.worldMatrix;
-    return vec3.normalize(
-      vec3.create(-worldMatrix[8], -worldMatrix[9], -worldMatrix[10]),
-    );
+  getForward(space: TransformSpace = "world"): Vec3 {
+    const forward = vec3.create(0, 0, -1);
+    if (space === "local") {
+      vec3.transformQuat(this.rotation, forward, forward);
+    } else {
+      // TODO: 世界空间
+    }
+    return forward;
   }
 
   // 向上方向（Y轴正方向）
-  get up(): Vec3 {
-    const worldMatrix = this.worldMatrix;
-    return vec3.normalize(
-      vec3.create(worldMatrix[4], worldMatrix[5], worldMatrix[6]),
-    );
+  getUp(space: TransformSpace = "world"): Vec3 {
+    const up = vec3.create(0, 1, 0);
+    if (space === "local") {
+      vec3.transformQuat(this.rotation, up, up);
+    }
+    return up;
   }
 
   // 向右方向（X轴正方向）
-  get right(): Vec3 {
-    const worldMatrix = this.worldMatrix;
-    return vec3.normalize(
-      vec3.create(worldMatrix[0], worldMatrix[1], worldMatrix[2]),
-    );
+  getRight(space: TransformSpace = "world"): Vec3 {
+    const right = vec3.create(1, 0, 0);
+    if (space === "local") {
+      vec3.transformQuat(this.rotation, right, right);
+    }
+    return right;
   }
 }
+
+export enum TransformDirty {
+  Local = 1 << 0,
+  World = 1 << 1,
+  LocalAndWorld = Local | World,
+}
+
+export type TransformSpace = "local" | "world";

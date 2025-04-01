@@ -1,5 +1,5 @@
 import { Component } from "./component";
-import { Transform } from "./transform";
+import { Transform, TransformDirty } from "./transform";
 import { Scene } from "./scene";
 
 export class Entity {
@@ -85,6 +85,9 @@ export class Entity {
         this._scene.updateRootEntityStatus(this, true);
       }
     }
+
+    // 更新Transform
+    this.transform.setDirty(TransformDirty.World);
   }
 
   get scene(): Scene | null {
