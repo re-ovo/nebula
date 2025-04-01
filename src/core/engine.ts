@@ -1,8 +1,13 @@
-export class Engine {
+import { RenderContext } from "@/render";
+import { Clock } from "./clock";
+
+export class Engine implements Disposable {
   readonly canvasContext: GPUCanvasContext;
   readonly device: GPUDevice;
   readonly preferredFormat: GPUTextureFormat;
   readonly size: { width: number; height: number };
+  readonly clock: Clock;
+  readonly renderContext: RenderContext;
 
   static async create(canvas: HTMLCanvasElement) {
     if (!navigator.gpu) {
@@ -28,20 +33,38 @@ export class Engine {
       width: this.canvasContext.canvas.width,
       height: this.canvasContext.canvas.height,
     };
+    this.clock = new Clock();
+    this.renderContext = new RenderContext(
+      this,
+      this.device,
+      this.canvasContext,
+      this.preferredFormat,
+      this.size,
+    );
+  }
+  [Symbol.dispose](): void {
+    throw new Error("Method not implemented.");
   }
 
   setSize(width: number, height: number) {
+    this.canvasContext.canvas.width = width;
+    this.canvasContext.canvas.height = height;
     this.size.width = width;
     this.size.height = height;
-    this.canvasContext.configure({
-      device: this.device,
-      format: this.preferredFormat,
-    });
+    this.renderContext.updateSize(width, height);
+  }
+
+  getTargetTexture() {
+    return this.canvasContext.getCurrentTexture();
+  }
+
+  getTargetTextureView(descriptor?: GPUTextureViewDescriptor) {
+    return this.getTargetTexture().createView(descriptor);
   }
 
   dispose() {
+    this.renderContext.dispose();
     this.canvasContext.unconfigure();
     this.device.destroy();
-    console.log("Engine disposed");
   }
 }

@@ -9,3 +9,7 @@ export type TypedArray =
   | Float64Array
   | BigInt64Array
   | BigUint64Array;
+
+export interface Disposable {
+  dispose(): void;
+}

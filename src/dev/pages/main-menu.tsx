@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 
 export default function MainMenu() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const engineRef = useRef<Engine>(null);
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -13,8 +14,14 @@ export default function MainMenu() {
 
         // 创建引擎
         const engine = await Engine.create(canvasRef.current!);
+        engineRef.current = engine;
+        console.log(engine);
       })();
     }
+
+    return () => {
+      engineRef.current?.dispose();
+    };
   }, []);
 
   return (
