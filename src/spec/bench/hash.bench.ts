@@ -5,6 +5,7 @@ import {
   hashNumber,
   hashBoolean,
   hashNumbers,
+  hashObject,
 } from "../../core/hash";
 
 describe("Hash Functions Benchmarks", () => {
@@ -16,6 +17,30 @@ describe("Hash Functions Benchmarks", () => {
 
     bench("带前值的数字哈希", () => {
       hash(42, 12345);
+    });
+
+    bench("对象Hash", () => {
+      hashObject({
+        a: 1,
+        b: 2,
+        c: 3,
+      });
+    });
+
+    bench("对象Hash (嵌套)", () => {
+      hashObject({
+        a: 1,
+        b: 2,
+        c: 3,
+        d: {
+          e: 4,
+          f: 5,
+          g: {
+            h: 6,
+            i: 7,
+          },
+        },
+      });
     });
   });
 

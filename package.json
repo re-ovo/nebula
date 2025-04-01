@@ -26,7 +26,6 @@
     "start": "vite",
     "test": "vitest --run",
     "bench": "vitest bench",
-    "bench:ecs": "vitest bench ./src/spec/bench/ecs.bench.ts",
     "build": "tsc && vite build",
     "lint": "eslint ./src --ext .ts",
     "format": "prettier ./src --write"
