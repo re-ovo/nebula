@@ -5,11 +5,9 @@ import "./index.css";
 import MainMenu from "./pages/main-menu";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<MainMenu />} />
-      </Routes>
-    </BrowserRouter>
-  </React.StrictMode>,
+  <BrowserRouter>
+    <Routes>
+      <Route path="/" element={<MainMenu />} />
+    </Routes>
+  </BrowserRouter>,
 );

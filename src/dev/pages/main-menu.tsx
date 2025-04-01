@@ -1,17 +1,25 @@
+import { Engine } from "@/core";
+import { useEffect, useRef } from "react";
+
 export default function MainMenu() {
-  const runTest = () => {
-    console.time("test");
-    // TODO: 测试
-    console.timeEnd("test");
-  };
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  useEffect(() => {
+    if (canvasRef.current) {
+      (async () => {
+        // 设置canvas大小
+        canvasRef.current!.width = canvasRef.current!.clientWidth;
+        canvasRef.current!.height = canvasRef.current!.clientHeight;
+
+        // 创建引擎
+        const engine = await Engine.create(canvasRef.current!);
+      })();
+    }
+  }, []);
+
   return (
-    <div>
-      <button
-        onClick={runTest}
-        className="bg-blue-500 text-white p-2 rounded cursor-pointer hover:bg-blue-600 active:bg-blue-700"
-      >
-        Run Test
-      </button>
+    <div className="flex flex-col items-center justify-center h-screen">
+      <canvas ref={canvasRef} className="w-full h-full"></canvas>
     </div>
   );
 }
