@@ -335,6 +335,7 @@ describe("Scene系统", () => {
       parent.destroy();
 
       expect(scene.entities.length).toBe(0);
+      expect(scene.rootEntities.length).toBe(0);
       expect(childComp.destroyCalled).toBe(true);
     });
   });
