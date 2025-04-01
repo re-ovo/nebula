@@ -4,7 +4,7 @@ A modern 3D Engine based on WebGPU.
 
 ## 🤩 Features
 
-- [x] ECS Architecture (Entity Component System)
+- [x] Entity/Component API like Unity
 - [x] Render Graph
 
 ## 📦 Installation
