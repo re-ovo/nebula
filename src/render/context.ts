@@ -2,28 +2,9 @@ import { Disposable, Engine } from "@/core";
 
 export class RenderContext implements Disposable {
   private _engine: Engine;
-  private _device: GPUDevice;
-  private _canvasContext: GPUCanvasContext;
-  private _preferredFormat: GPUTextureFormat;
-  private _size: { width: number; height: number };
 
-  constructor(
-    engine: Engine,
-    device: GPUDevice,
-    canvasContext: GPUCanvasContext,
-    preferredFormat: GPUTextureFormat,
-    size: { width: number; height: number },
-  ) {
+  constructor(engine: Engine) {
     this._engine = engine;
-    this._device = device;
-    this._canvasContext = canvasContext;
-    this._preferredFormat = preferredFormat;
-    this._size = size;
-  }
-
-  updateSize(width: number, height: number) {
-    this._size.width = width;
-    this._size.height = height;
   }
 
   get engine() {
@@ -31,19 +12,19 @@ export class RenderContext implements Disposable {
   }
 
   get device() {
-    return this._device;
+    return this._engine.device;
   }
 
   get canvasContext() {
-    return this._canvasContext;
+    return this._engine.canvasContext;
   }
 
   get preferredFormat() {
-    return this._preferredFormat;
+    return this._engine.preferredFormat;
   }
 
   get size() {
-    return this._size;
+    return this._engine.size;
   }
 
   getTargetTexture() {

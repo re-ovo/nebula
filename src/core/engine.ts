@@ -34,13 +34,7 @@ export class Engine implements Disposable {
       height: this.canvasContext.canvas.height,
     };
     this.clock = new Clock();
-    this.renderContext = new RenderContext(
-      this,
-      this.device,
-      this.canvasContext,
-      this.preferredFormat,
-      this.size,
-    );
+    this.renderContext = new RenderContext(this);
   }
   [Symbol.dispose](): void {
     throw new Error("Method not implemented.");
@@ -51,7 +45,6 @@ export class Engine implements Disposable {
     this.canvasContext.canvas.height = height;
     this.size.width = width;
     this.size.height = height;
-    this.renderContext.updateSize(width, height);
   }
 
   getTargetTexture() {
