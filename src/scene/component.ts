@@ -25,6 +25,10 @@ export abstract class Component {
     }
   }
 
+  getComponent<T extends Component>(componentType: new () => T): T | null {
+    return this.entity?.getComponent(componentType) as T | null;
+  }
+
   // 生命周期方法
   onAwake(): void {}
   onEnable(): void {}
