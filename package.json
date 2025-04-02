@@ -22,8 +22,8 @@
     "dist"
   ],
   "scripts": {
-    "dev": "tsc && vite build --watch",
-    "start": "vite",
+    "dev": "vite",
+    "dev:build": "tsc && vite build --watch",
     "test": "vitest --run",
     "bench": "vitest bench",
     "build": "tsc && vite build",
