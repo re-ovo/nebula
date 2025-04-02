@@ -2,11 +2,11 @@ export abstract class Component {
   private _entity: Entity | null = null;
   private _enabled: boolean = true;
 
-  get entity(): Entity | null {
-    return this._entity;
+  get entity(): Entity {
+    return this._entity!;
   }
 
-  set entity(value: Entity | null) {
+  set entity(value: Entity) {
     this._entity = value;
   }
 
@@ -26,7 +26,7 @@ export abstract class Component {
   }
 
   getComponent<T extends Component>(componentType: new () => T): T | null {
-    return this.entity?.getComponent(componentType) as T | null;
+    return this.entity.getComponent(componentType) as T | null;
   }
 
   // 生命周期方法

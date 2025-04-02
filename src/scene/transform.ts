@@ -13,6 +13,8 @@ export class Transform extends Component {
 
   private _localMatrix: Mat4 = mat4.identity();
   private _worldMatrix: Mat4 = mat4.identity();
+  private _localMatrixInverse: Mat4 = mat4.identity();
+  private _worldMatrixInverse: Mat4 = mat4.identity();
 
   private _dirtyFlags: TransformDirty = TransformDirty.LocalAndWorld;
 
@@ -67,7 +69,6 @@ export class Transform extends Component {
     return vec3.clone(this._worldScale);
   }
 
-  // 获取本地矩阵
   get localMatrix(): Mat4 {
     if (this.isDirty(TransformDirty.Local)) {
       this.updateLocalMatrix();
@@ -75,12 +76,25 @@ export class Transform extends Component {
     return this._localMatrix;
   }
 
-  // 获取世界矩阵
   get worldMatrix(): Mat4 {
     if (this.isDirty(TransformDirty.World)) {
       this.updateWorldMatrix();
     }
     return this._worldMatrix;
+  }
+
+  get worldMatrixInverse(): Mat4 {
+    if (this.isDirty(TransformDirty.World)) {
+      this.updateWorldMatrix();
+    }
+    return this._worldMatrixInverse;
+  }
+
+  get localMatrixInverse(): Mat4 {
+    if (this.isDirty(TransformDirty.Local)) {
+      this.updateLocalMatrix();
+    }
+    return this._localMatrixInverse;
   }
 
   setDirty(flags: TransformDirty): void {
@@ -109,13 +123,18 @@ export class Transform extends Component {
 
   // 更新本地矩阵
   updateLocalMatrix(): void {
+    // 重置本地矩阵
     mat4.identity(this._localMatrix);
+    // 平移
     mat4.translate(this._localMatrix, this._position, this._localMatrix);
-
+    // 旋转
     const rotationMatrix = mat4.fromQuat(this._rotation);
     mat4.multiply(this._localMatrix, rotationMatrix, this._localMatrix);
-
+    // 缩放
     mat4.scale(this._localMatrix, this._scale, this._localMatrix);
+
+    // 计算本地矩阵的逆矩阵
+    mat4.invert(this._localMatrix, this._localMatrixInverse);
 
     this.clearDirty(TransformDirty.Local);
   }
@@ -134,6 +153,9 @@ export class Transform extends Component {
         this._localMatrix,
         this._worldMatrix,
       );
+
+      // 计算世界矩阵的逆矩阵
+      mat4.invert(this._worldMatrix, this._worldMatrixInverse);
 
       // 更新世界位置
       vec3.transformMat4(

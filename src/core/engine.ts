@@ -1,5 +1,7 @@
-import { RenderContext } from "@/render";
+import { ForwardPipeline, RenderContext, RenderPipeline } from "@/render";
 import { Clock } from "./clock";
+import { Disposable } from "./types";
+import { Scene, Camera } from "@/scene";
 
 export class Engine implements Disposable {
   readonly canvasContext: GPUCanvasContext;
@@ -7,7 +9,9 @@ export class Engine implements Disposable {
   readonly preferredFormat: GPUTextureFormat;
   readonly size: { width: number; height: number };
   readonly clock: Clock;
+
   readonly renderContext: RenderContext;
+  private _renderPipeline: RenderPipeline;
 
   static async create(canvas: HTMLCanvasElement) {
     if (!navigator.gpu) {
@@ -35,9 +39,7 @@ export class Engine implements Disposable {
     };
     this.clock = new Clock();
     this.renderContext = new RenderContext(this);
-  }
-  [Symbol.dispose](): void {
-    throw new Error("Method not implemented.");
+    this._renderPipeline = new ForwardPipeline();
   }
 
   setSize(width: number, height: number) {
@@ -53,6 +55,34 @@ export class Engine implements Disposable {
 
   getTargetTextureView(descriptor?: GPUTextureViewDescriptor) {
     return this.getTargetTexture().createView(descriptor);
+  }
+
+  get renderPipeline() {
+    return this._renderPipeline;
+  }
+
+  set renderPipeline(pipeline: RenderPipeline) {
+    this._renderPipeline = pipeline;
+  }
+
+  render(scene: Scene) {
+    // 更新场景
+    scene.update(this.clock.deltaTime);
+
+    // 查找活动相机
+    const activeCameras: Camera[] = [];
+    for (const entity of scene.entities) {
+      if (entity.active) {
+        const camera = entity.getComponent(Camera);
+        if (camera) {
+          // Assume Camera component exists and is implicitly enabled if entity is active
+          activeCameras.push(camera);
+        }
+      }
+    }
+
+    // 渲染场景
+    this.renderPipeline.render(this.renderContext, activeCameras);
   }
 
   dispose() {
