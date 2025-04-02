@@ -42,6 +42,34 @@ describe("Hash Functions Benchmarks", () => {
         },
       });
     });
+
+    bench("JSON+String Hash", () => {
+      hashString(
+        JSON.stringify({
+          a: 1,
+          b: 2,
+          c: 3,
+        }),
+      );
+    });
+
+    bench("JSON+String Hash (嵌套)", () => {
+      hashString(
+        JSON.stringify({
+          a: 1,
+          b: 2,
+          c: 3,
+          d: {
+            e: 4,
+            f: 5,
+            g: {
+              h: 6,
+              i: 7,
+            },
+          },
+        }),
+      );
+    });
   });
 
   // 字符串哈希测试

@@ -1,4 +1,4 @@
-import { hashString } from "@/core";
+import { hashObject } from "@/core";
 
 export interface ShaderOptions {
   constants: Record<string, string | number>;
@@ -6,7 +6,7 @@ export interface ShaderOptions {
 }
 
 export const ShaderOptionsHash = (options: ShaderOptions) => {
-  return hashString(JSON.stringify(options));
+  return hashObject(options);
 };
 
 export const ShaderOptionsEqual = (a: ShaderOptions, b: ShaderOptions) => {

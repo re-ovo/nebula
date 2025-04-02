@@ -31,6 +31,7 @@
     "format": "prettier ./src --write"
   },
   "dependencies": {
+    "webgpu-utils": "^1.10.1",
     "wesl": "^0.6.0-rc4",
     "wgpu-matrix": "^3.4.0",
     "wgsl_reflect": "^1.2.0"

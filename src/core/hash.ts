@@ -41,8 +41,8 @@ function hashBoolean(bool: boolean, state: number = FNV_OFFSET_BASIS): number {
   return hash(bool ? 1 : 0, state);
 }
 
-function hashObject(
-  obj: Record<string, unknown>,
+function hashObject<T extends object>(
+  obj: T,
   state: number = FNV_OFFSET_BASIS,
 ): number {
   // 对对象的键进行排序，确保相同对象但键顺序不同时哈希值相同
@@ -56,8 +56,7 @@ function hashObject(
     // 哈希键
     state = hashString(key, state);
 
-    // 根据值的类型选择合适的哈希方法
-    const value = obj[key];
+    const value = (obj as Record<string, unknown>)[key];
     if (value === null || value === undefined) {
       state = hashNumber(0, state);
     } else if (typeof value === "string") {
