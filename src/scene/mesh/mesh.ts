@@ -36,6 +36,7 @@ export class Mesh {
   private _attributes: Map<string, VertexAttribute>;
   private _indices: Indice | null;
   private _vertexCount: number = 0;
+
   static readonly AttributePosition: VertexAttributeKey = {
     name: "a_position",
     format: "float32x3",

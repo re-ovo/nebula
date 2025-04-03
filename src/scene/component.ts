@@ -6,7 +6,7 @@ export abstract class Component {
     return this._entity!;
   }
 
-  set entity(value: Entity) {
+  set entity(value: Entity | null) {
     this._entity = value;
   }
 
