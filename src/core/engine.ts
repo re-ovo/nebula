@@ -66,6 +66,9 @@ export class Engine implements Disposable {
   }
 
   render(scene: Scene) {
+    // 更新时钟
+    this.clock.update();
+
     // 更新场景
     scene.update(this.clock.deltaTime);
 
