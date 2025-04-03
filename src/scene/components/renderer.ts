@@ -1,8 +1,10 @@
 import { Component } from "../component";
 import { Material } from "../material/material";
-import { Mesh } from "./mesh";
+import { Mesh } from "../mesh/mesh";
 
-export class MeshRenderer extends Component {
+export abstract class Renderer extends Component {}
+
+export class MeshRenderer extends Renderer {
   private _mesh: Mesh | null = null;
   private _material: Material | null = null;
 
