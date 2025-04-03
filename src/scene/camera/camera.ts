@@ -1,7 +1,5 @@
 import { Mat4, mat4 } from "wgpu-matrix";
 import { Component } from "../component";
-import { Transform } from "../transform";
-import { TransformSpace } from "../transform";
 
 export enum ProjectionType {
   Perspective,
