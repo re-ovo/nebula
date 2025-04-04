@@ -325,7 +325,7 @@ export class RenderGraph {
    * 执行编译后的渲染图
    * @returns Promise，完成渲染后解析
    */
-  async execute(): Promise<void> {
+  async execute(encoder: GPUCommandEncoder): Promise<void> {
     if (!this.engine.device) {
       throw new Error("No GPU device set for render graph");
     }
@@ -340,7 +340,6 @@ export class RenderGraph {
 
     const { orderedPasses, resourceMap } = this.compiled;
     const device = this.engine.device;
-    const encoder = device.createCommandEncoder();
 
     // 创建 Pass 上下文
     const context: PassContext = {
@@ -384,10 +383,6 @@ export class RenderGraph {
         await pass.execute(context);
       }
     }
-
-    // 提交命令
-    const commandBuffer = encoder.finish();
-    device.queue.submit([commandBuffer]);
   }
 
   /**
