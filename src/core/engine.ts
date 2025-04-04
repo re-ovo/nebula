@@ -39,7 +39,7 @@ export class Engine implements Disposable {
     };
     this.clock = new Clock();
     this.renderContext = new RenderContext(this);
-    this._renderPipeline = new ForwardPipeline();
+    this._renderPipeline = new ForwardPipeline(this);
   }
 
   setSize(width: number, height: number) {

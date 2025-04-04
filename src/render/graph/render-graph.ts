@@ -1,3 +1,5 @@
+import type { Engine } from "@/core";
+
 export type ResourceHandle = symbol;
 
 export enum ResourceType {
@@ -114,21 +116,13 @@ export interface CompiledGraph {
  * Render Graph 实现
  */
 export class RenderGraph {
+  private engine: Engine;
   private passes: Map<string, PassInfo> = new Map();
   private resources: Map<ResourceHandle, ResourceInfo> = new Map();
-  private device: GPUDevice | null = null;
   private compiled: CompiledGraph | null = null;
 
-  constructor(device: GPUDevice) {
-    this.device = device;
-  }
-
-  /**
-   * 设置GPU设备
-   */
-  setDevice(device: GPUDevice): this {
-    this.device = device;
-    return this;
+  constructor(engine: Engine) {
+    this.engine = engine;
   }
 
   /**
@@ -288,7 +282,7 @@ export class RenderGraph {
    * @returns 编译后的渲染图
    */
   compile(): CompiledGraph {
-    if (!this.device) {
+    if (!this.engine.device) {
       throw new Error("No GPU device set for render graph");
     }
 
@@ -324,7 +318,7 @@ export class RenderGraph {
    * @returns Promise，完成渲染后解析
    */
   async execute(): Promise<void> {
-    if (!this.device) {
+    if (!this.engine.device) {
       throw new Error("No GPU device set for render graph");
     }
 
@@ -337,7 +331,7 @@ export class RenderGraph {
     }
 
     const { orderedPasses, resourceMap } = this.compiled;
-    const device = this.device;
+    const device = this.engine.device;
     const encoder = device.createCommandEncoder();
 
     // 创建 Pass 上下文
@@ -514,7 +508,7 @@ export class RenderGraph {
   private allocatePhysicalResources(
     resourceMap: Map<ResourceHandle, ResourceInfo>,
   ): void {
-    if (!this.device) return;
+    if (!this.engine.device) return;
 
     // 为每个未分配的资源创建物理资源
     for (const resource of resourceMap.values()) {
@@ -524,7 +518,7 @@ export class RenderGraph {
       // 创建物理资源
       if (resource.type === ResourceType.Texture) {
         const desc = resource.desc as TextureDescriptor;
-        resource.physicalResource = this.device.createTexture({
+        resource.physicalResource = this.engine.device.createTexture({
           label: desc.label,
           size: desc.size,
           format: desc.format,
@@ -535,7 +529,7 @@ export class RenderGraph {
         });
       } else if (resource.type === ResourceType.Buffer) {
         const desc = resource.desc as BufferDescriptor;
-        resource.physicalResource = this.device.createBuffer({
+        resource.physicalResource = this.engine.device.createBuffer({
           label: desc.label,
           size: desc.size,
           usage: desc.usage,
