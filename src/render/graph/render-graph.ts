@@ -75,16 +75,21 @@ export interface PassContext {
 
 export interface PassBuilder {
   /** 声明读取一个资源 */
-  read(handle: TextureHandle | BufferHandle, usage: typeof ResourceUsage): void;
+  read(
+    handle: TextureHandle | BufferHandle,
+    usage: typeof ResourceUsage,
+  ): PassBuilder;
 
   /** 声明写入一个资源 */
   write(
     handle: TextureHandle | BufferHandle,
     usage: typeof ResourceUsage,
-  ): void;
+  ): PassBuilder;
 
   /** 设置 Pass 的执行回调 */
-  setExecute(callback: (context: PassContext) => void | Promise<void>): void;
+  setExecute(
+    callback: (context: PassContext) => void | Promise<void>,
+  ): PassBuilder;
 }
 
 export interface PassInfo {
@@ -251,6 +256,7 @@ export class RenderGraph {
     const builder: PassBuilder = {
       read(handle, usage) {
         reads.set(handle._id, usage);
+        return this;
       },
       write(handle, usage) {
         writes.add(handle._id);
@@ -258,9 +264,11 @@ export class RenderGraph {
         if (!reads.has(handle._id)) {
           reads.set(handle._id, usage);
         }
+        return this;
       },
       setExecute(callback) {
         executeCallback = callback;
+        return this;
       },
     };
 
