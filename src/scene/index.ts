@@ -5,3 +5,4 @@ export * from "./entity";
 export * from "./scene";
 export * from "./transform";
 export * from "./mesh";
+export * from "./material";
